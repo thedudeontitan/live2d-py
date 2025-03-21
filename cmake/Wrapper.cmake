@@ -12,9 +12,21 @@ else()
     set(CMAKE_PREFIX_PATH D:/Python/x64/3.10.0)
 endif()
 
-find_package(Python3 REQUIRED COMPONENTS Development.SABIModule)
+# Platform-specific Python configuration
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    find_package(Python3 REQUIRED COMPONENTS Development)
+    message("Python_Lib_Dir ${Python3_LIBRARY_DIRS}")
+    message("Python_LIBRARIES ${Python3_LIBRARIES}")
+else()
+    find_package(Python3 REQUIRED COMPONENTS Development.SABIModule)
+endif()
 
-target_link_libraries(LAppModelWrapper PRIVATE Main Python3::SABIModule)
+# Platform-specific linking
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    target_link_libraries(LAppModelWrapper PRIVATE Main Python3::Python)
+else()
+    target_link_libraries(LAppModelWrapper PRIVATE Main Python3::SABIModule)
+endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(MODULE_NAME lib${Wrapper}.so)
